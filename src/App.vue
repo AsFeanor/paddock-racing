@@ -43,14 +43,14 @@ async function completeOpening(restoreFocus: boolean) {
   if (restoreFocus) homeLink.value?.focus({ preventScroll: true })
 }
 
-async function selectHorse(id: string) {
+function selectHorse(id: string) {
   selectedHorseId.value = id
-  await nextTick()
-  experience.value?.followHorse()
 }
 
 async function followHorse(id: string) {
-  await selectHorse(id)
+  selectHorse(id)
+  await nextTick()
+  experience.value?.followHorse()
   document.getElementById('race-day')?.scrollIntoView({
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
     block: 'start',

@@ -167,7 +167,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
 <style scoped>
 .field-explorer {
   --field-ink: #292d27;
-  --field-muted: #797c71;
+  --field-muted: #626b5a;
   --field-line: #dedfd5;
   color: var(--field-ink);
   padding: 48px 0 0;
@@ -306,7 +306,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
 }
 .profile-condition > div > span {
   font-size: 10px;
-  color: #96998c;
+  color: var(--field-muted);
 }
 .profile-meter,
 .contender-meter {
@@ -366,7 +366,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
   background: transparent;
   padding: 8px 0;
   border-bottom: 1px solid transparent;
-  color: #8b8e81;
+  color: var(--field-muted);
   font-size: 11px;
 }
 .field-filters button[aria-pressed='true'] {
@@ -375,7 +375,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
 }
 .field-filters button > span {
   font-size: 9px;
-  color: #8c917e;
+  color: var(--field-muted);
   background: #e9eadf;
   padding: 2px 5px;
   border-radius: 2px;
@@ -463,7 +463,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #a4a697;
+  color: var(--field-muted);
   font-size: 7px;
   font-weight: 500;
   letter-spacing: 0.8px;
@@ -475,7 +475,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
   background: #bbbdaf;
 }
 .is-in-race .contender-availability {
-  color: #708258;
+  color: #566b43;
 }
 .is-in-race .contender-availability > span {
   background: #7c905f;
@@ -509,7 +509,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
   justify-content: space-between;
   margin-bottom: 8px;
   font-size: 9px;
-  color: #929686;
+  color: var(--field-muted);
 }
 .contender-condition > strong {
   color: #505a43;
@@ -519,7 +519,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
 }
 .contender-condition small {
   margin-left: 2px;
-  color: #a4a797;
+  color: var(--field-muted);
   font-size: 8px;
   font-weight: 400;
 }
@@ -533,7 +533,7 @@ const numberOf = (id: string) => String(numbers.value.get(id) ?? 0).padStart(2, 
   padding-top: 19px;
   font-size: 10px;
   line-height: 1.7;
-  color: #8b8e81;
+  color: var(--field-muted);
 }
 @media (max-width: 1100px) {
   .contender-grid {

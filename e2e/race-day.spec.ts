@@ -74,6 +74,30 @@ async function prepareRacePage(page: Page) {
   }
 }
 
+async function requireWebGL(page: Page) {
+  const supportsWebGL = await page.evaluate(() => {
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('webgl2')
+    const available = !!context
+    context?.getExtension('WEBGL_lose_context')?.loseContext()
+    return available
+  })
+  test.skip(
+    !supportsWebGL,
+    'This browser does not expose WebGL 2; core racing is tested in Classic view.',
+  )
+}
+
+async function expectClassicFallback(page: Page) {
+  await expect(page.locator('.scene-fallback')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.locator('.scene-loading')).toHaveCount(0)
+  await expect(page.locator('.race-scene-canvas')).toHaveCount(0)
+}
+
 test.beforeEach(async ({ page, colorScheme }) => {
   // Remote font latency is unrelated to these behavior assertions.
   await page.route(/https:\/\/fonts\.(?:googleapis|gstatic)\.com\//, (route) => route.abort())
@@ -371,6 +395,11 @@ test('filters the field, sorts by condition and name, and selects a contender wi
   await expect(field.locator('.profile-identity h3')).toHaveText(selectedName)
   await expect(field.locator('.profile-status')).toHaveText('In the current line-up')
   await expect(field.getByRole('button', { name: 'Follow on track', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.locator('.race-scene-canvas')).toHaveCount(0)
   expect(await page.locator('#round-1 > li span:nth-child(3)').allTextContents()).toEqual(
     startingLineup,
   )
@@ -388,19 +417,10 @@ test('3D camera and followed-runner controls preserve a paused race across prese
 }) => {
   test.setTimeout(90_000)
   await prepareRacePage(page)
-  const supportsWebGL = await page.evaluate(() => {
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('webgl2')
-    const available = !!context
-    context?.getExtension('WEBGL_lose_context')?.loseContext()
-    return available
-  })
-  test.skip(
-    !supportsWebGL,
-    'This browser does not expose WebGL 2; core racing is tested in Classic view.',
-  )
+  await requireWebGL(page)
 
   await startRace(page)
+  const startingLineup = await page.locator('#round-1 > li span:nth-child(3)').allTextContents()
   await page.clock.fastForward(1000)
   await page.getByRole('button', { name: 'Pause race', exact: true }).click()
   const pausedTime = await page.locator('.race-clock strong').textContent()
@@ -408,7 +428,22 @@ test('3D camera and followed-runner controls preserve a paused race across prese
     .locator('.runner')
     .evaluateAll((elements) => elements.map((element) => (element as HTMLElement).style.left))
 
-  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  const field = page.getByRole('region', { name: 'Meet the contenders.' })
+  const selectedName = startingLineup[0]!
+  const selectedCard = field.getByRole('button', {
+    name: new RegExp(`^${selectedName}, condition`),
+  })
+  await selectedCard.click()
+  await expect(selectedCard).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await field.getByRole('button', { name: 'Follow on track', exact: true }).click()
+  await expect(page.getByRole('button', { name: '3D experience', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await expect(page.locator('.race-experience .scene-loading')).toHaveCount(0, { timeout: 15_000 })
   await page.clock.runFor(32)
   await expect(page.locator('.race-scene-canvas')).toBeVisible()
@@ -424,6 +459,10 @@ test('3D camera and followed-runner controls preserve a paused race across prese
   const finishLine = page.getByRole('button', { name: /Finish line$/ })
   await expect(trackside).toHaveAttribute('aria-pressed', 'true')
   await expect(grandstand).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.locator('.scene-caption small')).toContainText(selectedName)
+  expect(await page.locator('#round-1 > li span:nth-child(3)').allTextContents()).toEqual(
+    startingLineup,
+  )
 
   const followedRunner = page.locator('.order-chips > button').first()
   const followedName = (await followedRunner.textContent())!.replace(/^\s*\d+\s*/, '').trim()
@@ -452,18 +491,122 @@ test('3D camera and followed-runner controls preserve a paused race across prese
   await expectNoHorizontalOverflow(page)
 })
 
+test('stalled horse-model requests cancel on Classic and time out to a working race', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await prepareRacePage(page)
+  await requireWebGL(page)
+  // Leave the actual model request pending; the application must cancel the
+  // browser request, rather than merely replacing its loading message.
+  await page.route('**/assets/horse.glb', () => {})
+
+  const firstModelRequested = page.waitForRequest('**/assets/horse.glb')
+  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  const firstRequest = await firstModelRequested
+  const canceled = page.waitForEvent('requestfailed', {
+    predicate: (request) => request === firstRequest,
+  })
+  await page.getByRole('button', { name: 'Classic view', exact: true }).click()
+  expect((await canceled).failure()?.errorText).toContain('ERR_ABORTED')
+  await page.clock.fastForward(15_001)
+  await expect(page.locator('.scene-fallback')).toHaveCount(0)
+  await expect(page.locator('.scene-loading')).toHaveCount(0)
+  await expect(page.locator('.race-scene-canvas')).toHaveCount(0)
+
+  const secondModelRequested = page.waitForRequest('**/assets/horse.glb')
+  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  const secondRequest = await secondModelRequested
+  await page.clock.fastForward(14_999)
+  await expect(page.locator('.scene-fallback')).toHaveCount(0)
+  await expect(page.locator('.race-experience > .scene-stage > .scene-loading')).toBeVisible()
+  const timedOut = page.waitForEvent('requestfailed', {
+    predicate: (request) => request === secondRequest,
+  })
+  await page.clock.fastForward(1)
+  await expectClassicFallback(page)
+  expect((await timedOut).failure()?.errorText).toContain('ERR_ABORTED')
+
+  await startRace(page)
+  await page.clock.fastForward(12_000)
+  await expect(page.getByRole('tab', { name: 'Results 1', exact: true })).toBeVisible()
+  await expect(page.locator('.track-meta')).toContainText('Round 2')
+})
+
+test('a rejected horse-model request keeps Classic racing and contender inspection available', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  await prepareRacePage(page)
+  await requireWebGL(page)
+  await page.route('**/assets/horse.glb', (route) => route.abort('failed'))
+  const modelRequested = page.waitForRequest('**/assets/horse.glb')
+  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  await modelRequested
+  await expectClassicFallback(page)
+
+  await startRace(page)
+  await page.clock.fastForward(1000)
+  const startingLineup = await page.locator('#round-1 > li span:nth-child(3)').allTextContents()
+  const field = page.getByRole('region', { name: 'Meet the contenders.' })
+  const selectedName = startingLineup[0]!
+  const selectedCard = field.getByRole('button', {
+    name: new RegExp(`^${selectedName}, condition`),
+  })
+  await selectedCard.click()
+  await expect(selectedCard).toHaveAttribute('aria-pressed', 'true')
+  await expect(field.locator('.profile-identity h3')).toHaveText(selectedName)
+  await expectClassicFallback(page)
+  expect(await page.locator('#round-1 > li span:nth-child(3)').allTextContents()).toEqual(
+    startingLineup,
+  )
+  await page.clock.fastForward(11_000)
+  await expect(page.getByRole('tab', { name: 'Results 1', exact: true })).toBeVisible()
+  await expect(page.locator('.track-meta')).toContainText('Round 2')
+})
+
+test('losing the real graphics context continues the same race in Classic', async ({ page }) => {
+  test.setTimeout(90_000)
+  await prepareRacePage(page)
+  await requireWebGL(page)
+  await startRace(page)
+  await page.clock.fastForward(1000)
+  const runningTime = await page.locator('.race-clock strong').textContent()
+  const startingLineup = await page.locator('#round-1 > li span:nth-child(3)').allTextContents()
+  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  await expect(page.locator('.race-experience .scene-loading')).toHaveCount(0, { timeout: 15_000 })
+  const canvas = page.locator('.race-scene-canvas')
+  await expect(canvas).toBeVisible()
+  await expect(page.getByRole('button', { name: /Trackside$/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  const canLoseContext = await canvas.evaluate((element) =>
+    !!(element as HTMLCanvasElement).getContext('webgl2')?.getExtension('WEBGL_lose_context'),
+  )
+  test.skip(!canLoseContext, 'This WebGL implementation cannot simulate graphics context loss.')
+  await canvas.evaluate((element) => {
+    const context = (element as HTMLCanvasElement).getContext('webgl2')!
+    context.getExtension('WEBGL_lose_context')!.loseContext()
+  })
+  await expectClassicFallback(page)
+  await expect(page.getByRole('button', { name: 'Pause race', exact: true })).toBeVisible()
+  await expect(page.locator('.race-clock strong')).toHaveText(runningTime!)
+  expect(await page.locator('#round-1 > li span:nth-child(3)').allTextContents()).toEqual(
+    startingLineup,
+  )
+  await page.clock.fastForward(11_000)
+  await expect(page.getByRole('tab', { name: 'Results 1', exact: true })).toBeVisible()
+  await expect(page.locator('.track-meta')).toContainText('Round 2')
+})
+
 test('a failed 3D module download falls back to a working Classic race', async ({ page }) => {
   await prepareRacePage(page)
   await page.route('**/assets/RaceScene-*.js', (route) => route.abort('failed'))
   await navigateApp(page, 'reduce', true)
   await expectPageReady(page)
   await page.clock.runFor(32)
-  await expect(page.locator('.scene-fallback')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
-  await expect(page.locator('.scene-loading')).toHaveCount(0)
+  await expectClassicFallback(page)
   await startRace(page)
   await page.clock.fastForward(1000)
   await expect(page.locator('.race-clock strong')).not.toHaveText('0:00.0')

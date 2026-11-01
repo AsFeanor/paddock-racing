@@ -15,6 +15,7 @@ import {
 } from '../scene/course'
 import type { Horse } from '../domain/race'
 import { normalizeHorse } from '../scene/model'
+import { loadModelWithTimeout } from '../scene/loadModelWithTimeout'
 
 const props = withDefaults(
   defineProps<{
@@ -64,6 +65,7 @@ let scene: THREE.Scene | undefined
 let renderer: THREE.WebGLRenderer | undefined
 let camera: THREE.PerspectiveCamera | undefined
 let modelTemplate: THREE.Object3D | undefined
+let modelLoad: AbortController | undefined
 let course: THREE.Group | undefined
 let hemisphere: THREE.HemisphereLight | undefined
 let keyLight: THREE.DirectionalLight | undefined
@@ -487,6 +489,7 @@ function contextLost(event: Event) {
 function fail(reason: string) {
   if (disposed || failed) return
   failed = true
+  modelLoad?.abort()
   cancelAnimationFrame(frameId)
   frameId = 0
   emit('fallback', reason)
@@ -578,9 +581,18 @@ onMounted(async () => {
     document.addEventListener('visibilitychange', visibilityChanged)
     reducedMotion.addEventListener('change', resumeRendering)
 
+    if (disposed || failed) return
     const modelUrl = new URL(`${import.meta.env.BASE_URL}assets/horse.glb`, document.baseURI).href
-    const model = await new GLTFLoader().loadAsync(modelUrl)
-    if (disposed) {
+    const loader = new GLTFLoader()
+    modelLoad = new AbortController()
+    const model = await loadModelWithTimeout(
+      modelUrl,
+      (data, path) => loader.parseAsync(data, path),
+      (lateModel) => disposeObject(lateModel.scene),
+      modelLoad.signal,
+    )
+    modelLoad = undefined
+    if (disposed || failed) {
       disposeObject(model.scene)
       return
     }
@@ -590,9 +602,12 @@ onMounted(async () => {
     updateRunners()
     chooseCamera(1, true)
     renderer.render(scene, camera)
+    if (disposed || failed) return
     resumeRendering()
     emit('ready')
   } catch (error) {
+    modelLoad = undefined
+    if (disposed || failed) return
     console.warn('The 3D racecourse could not be opened.', error)
     fail('The 3D view could not be loaded. The standard race view is available.')
   }
@@ -600,6 +615,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   disposed = true
+  modelLoad?.abort()
+  modelLoad = undefined
   stopSceneWatch()
   cancelAnimationFrame(frameId)
   resizeObserver?.disconnect()

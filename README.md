@@ -48,7 +48,7 @@ npm run build
 npm run test:e2e
 ```
 
-An existing Chrome installation can be used with `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. The browser suite runs at desktop (1440 × 1000) and mobile (390 × 844) viewports. It covers line-ups, pause/resume, sequential results, resets, keyboard navigation, responsive layout, contender selection, camera controls, theme persistence and the opening. Tests control browser time rather than accessing the application store. Core racing scenarios use Classic view; the 3D scenario skips when WebGL 2 is unavailable. `npm run test:e2e -- --list` lists the scenarios without launching a browser.
+An existing Chrome installation can be used with `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. The browser suite runs at desktop (1440 × 1000) and mobile (390 × 844) viewports. It covers line-ups, pause/resume, sequential results, resets, keyboard navigation, responsive layout, contender inspection versus explicit following, camera controls, theme persistence and the opening. It also exercises cancelled, stalled and rejected model requests, graphics-context loss, and failed scene-module downloads. Tests control browser time rather than accessing the application store. Core racing scenarios use Classic view; graphics-dependent scenarios skip when WebGL 2 is unavailable. `npm run test:e2e -- --list` lists the scenarios without launching a browser.
 
 For visual comparisons:
 
@@ -80,7 +80,7 @@ Switching away from the browser tab pauses a running race. Opening the instructi
 
 - **Grandstand** shows the whole course, **Trackside** follows the selected horse (or the leader), and **Finish line** frames the finish. Starting a race day selects Trackside automatically; pause/resume retains the chosen camera. Drag the scene to adjust the viewing angle.
 - Click a horse, its numbered label, or a leading-runner chip to select it and switch to the following camera. The same selection appears in the paddock profile.
-- **Meet the contenders** shows all 20 horses. Filter to **This race**, sort by number, condition or name, and select a card to inspect that horse. **Follow on track** is available when the horse belongs to the current line-up.
+- **Meet the contenders** shows all 20 horses. Filter to **This race**, sort by number, condition or name, and select a card to inspect that horse while keeping the current presentation. **Follow on track** opens the 3D Trackside camera when the horse belongs to the current line-up.
 - **Classic view** is available at any time and retains the race's time, progress and results. If the 3D scene cannot load or its graphics context becomes unavailable, the interface falls back to Classic view.
 
 ## Architecture
@@ -98,6 +98,8 @@ src/
   scene/model.test.ts           Regression check against the bundled GLB
   scene/loadWithTimeout.ts      Bounded loading for the optional 3D presentation
   scene/loadWithTimeout.test.ts  Async success, failure and timeout coverage
+  scene/loadModelWithTimeout.ts  Abortable model download and bounded parsing
+  scene/loadModelWithTimeout.test.ts  Cancellation, deadline and late-result disposal coverage
   components/
     OpeningSequence.vue         Skippable cinematic entrance and motion preference
     RaceExperience.vue          Presentation switch, camera controls and race telemetry
@@ -115,7 +117,7 @@ src/
 
 The domain has no Vue or browser dependencies. Random sources can be injected into domain functions for reproducible tests. The store owns state transitions; components render state and dispatch actions. `useRaceClock` is the only loop that advances the simulation. The 3D scene has a separate rendering loop that reads the same store positions and derives horse animation from simulation time. Camera changes and decorative animation cannot change race outcomes.
 
-`RaceExperience` loads `RaceScene` asynchronously, keeping the 3D code in a separate bundle. The scene builds its course from reusable geometry, loads a local animated horse model, and clones independent skeletons for the runners. Pointer raycasting and projected button labels support selection. Rendering resolution is capped at a device pixel ratio of 2 (1.5 on narrow screens); rendering stops when the scene is off-screen or the document is hidden. Idle and paused scenes render only after a relevant interaction, stopping again once the camera settles. On unmount, the scene removes listeners and observers, cancels its frame callback, and disposes graphics resources.
+`RaceExperience` loads `RaceScene` asynchronously, keeping the 3D code in a separate bundle. Both the module import and model loading have a 15-second deadline. Model loading covers the download, response body and parsing; timeout or unmount aborts the download, and any parsed result arriving after cancellation is disposed. Failures fall back to Classic without resetting the race. The scene builds its course from reusable geometry, loads a local animated horse model, and clones independent skeletons for the runners. Pointer raycasting and projected button labels support selection. Rendering resolution is capped at a device pixel ratio of 2 (1.5 on narrow screens); rendering stops when the scene is off-screen or the document is hidden. Idle and paused scenes render only after a relevant interaction, stopping again once the camera settles. On unmount, the scene removes listeners and observers, cancels its frame callback, and disposes graphics resources.
 
 There is no race-state persistence, router or server because this is a single-session, single-screen simulation. `useTheme` stores only the explicit appearance preference under `paddock-theme` in `localStorage`. The opening is mounted on each page load rather than remembered as a completed session step; its timers and listeners are removed on unmount. Classic view and the contender profile use local raster artwork; icons are local SVG. `HorseSprite` animates the four equal cells of a transparent 2×2 atlas with discrete CSS background positions. The decorative gallop pauses with the race and becomes a still frame for reduced-motion preferences. Typography uses Google Fonts with system fallbacks; the application remains functional without font-network access.
 
@@ -135,7 +137,7 @@ The animated 3D horse is **Horse by Quaternius**, released under **CC0 1.0** and
 
 ## Verification
 
-Clean installation, type checking, the production build and 27 unit tests have passed. Unit coverage includes generation constraints, condition influence, monotonic movement, finish ordering, pause/resume, resets, sequential completion and bounded async loading. A regression test loads the actual horse model and verifies its bounds at idle and during gallop poses.
+Clean installation, type checking, the production build and 36 unit tests have passed. Unit coverage includes generation constraints, condition influence, monotonic movement, finish ordering, pause/resume, resets, sequential completion, bounded async loading, model-download cancellation and disposal of late parsed results. A regression test loads the actual horse model and verifies its bounds at idle and during gallop poses.
 
 Interactive browser checks covered all six rounds, complete results, camera and selection controls, theme switching, opening dismissal and 320–1440 px layouts. [Checks](https://github.com/AsFeanor/paddock-racing/actions/workflows/checks.yml) runs the build, unit tests, end-to-end scenarios and visual comparisons on pushes and pull requests. The workflow badge and run reports provide the latest automated results.
 

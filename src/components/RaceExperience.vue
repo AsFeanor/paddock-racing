@@ -304,7 +304,7 @@ defineExpose({ followHorse })
   font-size: 10px;
   padding: 8px 11px;
   border-radius: 5px;
-  color: #7b8576;
+  color: #5f6c59;
   background: transparent;
   white-space: nowrap;
 }
