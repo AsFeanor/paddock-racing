@@ -1,0 +1,801 @@
+/* The club after dusk. Horse silks retain their individual identity colours. */
+:root {
+  color-scheme: light;
+  --page-background: #f5f4ee;
+  --surface: #fdfcf7;
+  --surface-raised: #fffef9;
+  --surface-soft: #eef0e6;
+  --text-primary: #2b4432;
+  --text-secondary: #6c7b61;
+  --text-muted: #85917d;
+  --border-subtle: #e0e4d8;
+  --border-strong: #b3bfa5;
+  --accent-sage: #809669;
+  --accent-gold: #ac8450;
+  --focus-ring: #a8774d;
+  --theme-duration: 240ms;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --page-background: #101b18;
+  --surface: #182620;
+  --surface-raised: #203129;
+  --surface-soft: #1c2d25;
+  --text-primary: #eeeade;
+  --text-secondary: #b8c3b0;
+  --text-muted: #94a590;
+  --border-subtle: #304136;
+  --border-strong: #61755d;
+  --accent-sage: #acbe93;
+  --accent-gold: #d1b580;
+  --focus-ring: #d9bc86;
+  --ink: var(--text-primary);
+  --paper: var(--surface);
+  --muted: var(--text-muted);
+  --line: var(--border-subtle);
+  --green: #aabe94;
+  --lime: #d1b580;
+  background: var(--page-background);
+  color: var(--text-primary);
+  scrollbar-color: #52644e var(--page-background);
+}
+
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(ellipse at 10% 0%, #9d885b08, transparent 42rem), var(--page-background);
+}
+
+html[data-theme='dark'] ::selection {
+  background: #d1b58045;
+  color: #fff9e9;
+}
+
+html[data-theme='dark'] :is(button, a, [tabindex], select):focus-visible {
+  outline-color: var(--focus-ring);
+}
+
+html[data-theme='dark'] .skip-link {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+/* Masthead, invitation and race-day controls. */
+html[data-theme='dark'] :is(.club-header, .race-day-toolbar, .club-interlude, .club-footer) {
+  border-color: var(--border-subtle);
+}
+
+html[data-theme='dark'] .club-monogram {
+  border-color: #718365;
+  color: #d1b580;
+}
+
+html[data-theme='dark']
+  :is(
+    .club-brand small,
+    .club-kicker,
+    .club-intro-note p,
+    .club-intro-note > div > span,
+    .meet-title span:not(.meet-dot),
+    .club-interlude > span,
+    .club-footer p,
+    .club-footer > span
+  ) {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] :is(.club-nav a, .club-help, .toolbar-reset, .club-interlude > a) {
+  color: var(--text-secondary);
+}
+
+html[data-theme='dark']
+  :is(
+    .club-nav a:first-child,
+    .club-nav a:hover,
+    .club-help:hover,
+    .toolbar-reset:hover,
+    .club-interlude > a:hover
+  ) {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .club-nav a::after {
+  background: var(--accent-gold);
+}
+
+html[data-theme='dark'] :is(.club-intro h1 em, .club-interlude em, .footer-wordmark) {
+  color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .club-intro-note b {
+  color: var(--accent-sage);
+}
+
+html[data-theme='dark'] :is(.club-kicker i, .meet-dot) {
+  background: var(--accent-sage);
+  box-shadow: 0 0 0 4px #acbe9310;
+}
+
+html[data-theme='dark'] .intro-rule {
+  background: #8f835c;
+}
+
+html[data-theme='dark'] .button.primary,
+html[data-theme='dark'] .race-day-toolbar .button.primary {
+  color: #19271c;
+  background: #c2cba5;
+  box-shadow:
+    0 3px 14px #00000016,
+    inset 0 1px 0 #ffffff24;
+}
+
+html[data-theme='dark'] .button.primary:not(:disabled):hover {
+  background: #d8dfbd;
+  box-shadow: 0 4px 22px #afc09118;
+}
+
+html[data-theme='dark'] .button.secondary,
+html[data-theme='dark'] .race-day-toolbar .button.secondary {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  border-color: #4c5f4b;
+}
+
+html[data-theme='dark'] .button.secondary:not(:disabled):hover {
+  background: #2c4031;
+  border-color: #718365;
+}
+
+html[data-theme='dark'] .button:disabled,
+html[data-theme='dark'] .race-day-toolbar .button:disabled {
+  background: #223028;
+  color: #788775;
+  border-color: #344338;
+  box-shadow: none;
+}
+
+/* Layered race-day surfaces, with a champagne highlight on active controls. */
+html[data-theme='dark'] .race-experience,
+html[data-theme='dark'] .experience-layout > .program-panel {
+  color: var(--text-primary);
+  background: var(--surface);
+  border-color: var(--border-subtle);
+  box-shadow:
+    0 16px 50px #00000019,
+    inset 0 1px 0 #eeeade04;
+}
+
+html[data-theme='dark'] .experience-head .eyebrow,
+html[data-theme='dark'] .experience-layout .program-panel .eyebrow {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .experience-head h2 > span {
+  color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .view-switch {
+  background: #101d16;
+  box-shadow: inset 0 1px 3px #00000016;
+}
+
+html[data-theme='dark'] .view-switch button {
+  color: #a2b19a;
+}
+
+html[data-theme='dark'] .view-switch button[aria-pressed='true'] {
+  background: #304334;
+  color: #f1ebd8;
+  box-shadow:
+    0 1px 5px #00000025,
+    inset 0 1px 0 #ffffff08;
+}
+
+html[data-theme='dark'] .experience-rounds > div {
+  background: #1a2922;
+  border-color: #314033;
+  color: #9bad93;
+}
+
+html[data-theme='dark'] .experience-rounds > div.complete {
+  background: #25372a;
+  color: #c2d0a6;
+}
+
+html[data-theme='dark'] .experience-rounds > div.active {
+  background: #363c2c;
+  border-color: #a58e5f;
+  color: #e7d5ae;
+}
+
+html[data-theme='dark'] :is(.scene-stage, .race-scene) {
+  background: #101b18;
+}
+
+html[data-theme='dark'] .scene-stage::after {
+  background: linear-gradient(180deg, #0d18164a, transparent 25%, transparent 65%, #0d18168c);
+}
+
+html[data-theme='dark'] .scene-state {
+  color: #d1dbbf;
+  background: #15271fd9;
+  border-color: #8eaa7840;
+  box-shadow: 0 3px 16px #00000012;
+}
+
+html[data-theme='dark'] .scene-state i {
+  background: #a8bf8d;
+}
+
+html[data-theme='dark'] .scene-state.running i {
+  background: #bfdc92;
+  box-shadow:
+    0 0 0 4px #a9c27b18,
+    0 0 9px #b5d28550;
+}
+
+html[data-theme='dark'] .scene-state.paused i {
+  background: var(--accent-gold);
+}
+
+html[data-theme='dark'] .scene-edition {
+  color: #bfcaac;
+  text-shadow: 0 1px 12px #06110a60;
+}
+
+html[data-theme='dark'] .scene-caption > span {
+  color: #e3dfcc;
+  text-shadow: 0 2px 18px #08150d80;
+}
+
+html[data-theme='dark'] .scene-caption small {
+  color: #abbc9d;
+}
+
+html[data-theme='dark'] .scene-camera {
+  background: #14251ee8;
+  border-color: #6e825543;
+  box-shadow: 0 6px 25px #00000025;
+}
+
+html[data-theme='dark'] .scene-camera button {
+  color: #b4c2a9;
+}
+
+html[data-theme='dark'] .scene-camera button[aria-pressed='true'] {
+  background: #c6caa3;
+  color: #1b2c20;
+}
+
+html[data-theme='dark'] .scene-hint {
+  color: #bfcdac;
+  text-shadow: 0 1px 8px #0b191a;
+}
+
+html[data-theme='dark'] .scene-loading {
+  background: #101b18;
+  color: #c1cbb1;
+}
+
+html[data-theme='dark'] .scene-loading > span,
+html[data-theme='dark'] .scene-loading-ring {
+  border-color: #d1b58033;
+  border-top-color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .scene-runner-label {
+  background: #182a21ee;
+  border-color: #84957280;
+  color: #f1eedc;
+  box-shadow: 0 2px 8px #00000035;
+}
+
+html[data-theme='dark'] .scene-runner-label::after {
+  border-top-color: #182a21ee;
+}
+
+html[data-theme='dark']
+  :is(
+    .scene-runner-label.selected,
+    .scene-runner-label.hovered,
+    .scene-runner-label:focus-visible
+  ) {
+  background: #344735;
+  border-color: var(--accent-gold);
+  box-shadow: 0 3px 15px #00000050;
+}
+
+html[data-theme='dark']
+  :is(
+    .scene-runner-label.selected,
+    .scene-runner-label.hovered,
+    .scene-runner-label:focus-visible
+  )::after {
+  border-top-color: #344735;
+}
+
+html[data-theme='dark'] .experience-telemetry {
+  border-color: var(--border-subtle);
+}
+
+html[data-theme='dark'] .experience-telemetry .eyebrow,
+html[data-theme='dark'] .field-order > .eyebrow {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .experience-telemetry strong {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .experience-telemetry strong > span,
+html[data-theme='dark'] :is(.field-order > p, .scene-fallback) {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .telemetry-progress > div {
+  background: #334532;
+}
+
+html[data-theme='dark'] .telemetry-progress > div > span {
+  background: linear-gradient(90deg, #9eb489, #d1b580);
+}
+
+html[data-theme='dark'] .order-chips button {
+  color: #d3dcc7;
+  background: #1e2f24;
+  border-color: #364934;
+}
+
+html[data-theme='dark'] .order-chips button[aria-pressed='true'] {
+  background: #343d2a;
+  border-color: #9a9162;
+  color: #f1e6c6;
+}
+
+html[data-theme='dark'] :is(.order-position, .order-chips svg) {
+  color: #a8b599;
+}
+
+/* Program, finishing order and all expanded/empty states. */
+html[data-theme='dark'] .program-panel-mark {
+  border-color: #4b5d42;
+  color: var(--accent-sage);
+}
+
+html[data-theme='dark'] .program-empty-art {
+  background: #2b3e2d;
+  color: #b8c79d;
+  box-shadow: 0 0 0 9px #1e2e23;
+}
+
+html[data-theme='dark'] .tabs button {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .tabs button.active {
+  color: #e5d5b0;
+  border-color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .tabs button span {
+  color: #9db08d;
+  background: #26382a;
+}
+
+html[data-theme='dark'] .tabs button.active span {
+  color: #e3d0a6;
+  background: #3a402d;
+}
+
+html[data-theme='dark'] .program-content {
+  scrollbar-color: #4b6146 transparent;
+}
+
+html[data-theme='dark'] .side-empty h3 {
+  color: #d2d9bf;
+}
+
+html[data-theme='dark'] :is(.side-empty, .side-empty p, .empty-rounds span) {
+  color: var(--text-muted);
+}
+
+html[data-theme='dark'] .empty-rounds span {
+  border-color: #3e5037;
+}
+
+html[data-theme='dark'] .round-card {
+  border-color: #354731;
+  background: #17271e;
+}
+
+html[data-theme='dark'] .round-heading {
+  background: #1d2e23;
+}
+
+html[data-theme='dark'] .round-heading:hover {
+  background: #2a3d2b;
+}
+
+html[data-theme='dark'] .round-heading strong {
+  color: #d8dfc8;
+}
+
+html[data-theme='dark']
+  :is(
+    .round-heading small,
+    .round-heading > svg,
+    .round-state,
+    .lineup-labels,
+    .entry-number,
+    .entry-condition,
+    .program-footer
+  ) {
+  color: #9caf8c;
+}
+
+html[data-theme='dark'] .round-number {
+  background: #2c3d29;
+  color: #a9bd91;
+}
+
+html[data-theme='dark'] .round-number.done {
+  background: #35472c;
+  color: #d0dcb0;
+}
+
+html[data-theme='dark'] .round-card.current {
+  border-color: #8a8559;
+  box-shadow: 0 2px 8px #00000012;
+}
+
+html[data-theme='dark'] .round-card.current .round-number {
+  background: #434832;
+  color: #e4c99a;
+}
+
+html[data-theme='dark']
+  :is(.round-state.next, .round-state.live, .round-state.complete, .podium-position) {
+  color: #c4d1a4;
+}
+
+html[data-theme='dark'] .round-state.live::before {
+  background: #b8d38d;
+  box-shadow: 0 0 0 3px #b8d38d14;
+}
+
+html[data-theme='dark'] .round-horses {
+  border-color: var(--border-subtle);
+}
+
+html[data-theme='dark'] .round-horses li {
+  color: #c5d0b6;
+}
+
+html[data-theme='dark'] .results-list li.winner {
+  background: #3b422c;
+  color: #e5d7b1;
+}
+
+html[data-theme='dark'] .winner-summary {
+  background: #1d2e23;
+  color: #c3cfae;
+}
+
+html[data-theme='dark'] .winner-summary > span:last-child {
+  color: #b4bd94;
+}
+
+html[data-theme='dark'] .completion-steps .step {
+  background: #34452f;
+}
+
+html[data-theme='dark'] .completion-steps .step.done {
+  background: #b4c293;
+}
+
+html[data-theme='dark'] .completion-steps .step.current {
+  background: #8c8059;
+}
+
+/* The contenders: gently lit portraits and coloured racing silks. */
+html[data-theme='dark'] .field-explorer {
+  --field-ink: var(--text-primary);
+  --field-muted: var(--text-muted);
+  --field-line: var(--border-subtle);
+}
+
+html[data-theme='dark'] .field-eyebrow span {
+  color: #a4b18f;
+}
+
+html[data-theme='dark'] .field-heading h2 > span {
+  color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .field-profile {
+  background:
+    radial-gradient(ellipse at 12% 50%, #b4c18a11, transparent 40%),
+    linear-gradient(105deg, #223126, #18261f 60%, #202d24);
+  border-color: #42513a;
+  box-shadow: inset 0 1px 0 #f2e3c007;
+}
+
+html[data-theme='dark'] .profile-orbit,
+html[data-theme='dark'] .profile-orbit::after {
+  border-color: #65745245;
+}
+
+html[data-theme='dark'] .profile-number {
+  color: color-mix(in srgb, var(--runner-color) 29%, transparent);
+}
+
+html[data-theme='dark'] .profile-status > span,
+html[data-theme='dark'] .contender-availability > span {
+  background: #728069;
+}
+
+html[data-theme='dark'] .profile-status > .is-active {
+  background: #b4c790;
+  box-shadow: 0 0 0 4px #b4c79010;
+}
+
+html[data-theme='dark']
+  :is(
+    .profile-condition > div > span,
+    .contender-condition,
+    .contender-condition small,
+    .contender-availability,
+    .field-footnote
+  ) {
+  color: #9aaa8b;
+}
+
+html[data-theme='dark'] :is(.profile-meter, .contender-meter) {
+  background: #35422f;
+}
+
+html[data-theme='dark'] .profile-meter > span {
+  background: #aabb87;
+}
+
+html[data-theme='dark'] .profile-follow {
+  border-color: #71805d;
+  color: #d5dfbf;
+}
+
+html[data-theme='dark'] .profile-follow:hover {
+  background: #d0d4ac;
+  color: #213020;
+  border-color: #d0d4ac;
+}
+
+html[data-theme='dark'] .field-filters button {
+  color: #9dac8f;
+}
+
+html[data-theme='dark'] .field-filters button[aria-pressed='true'] {
+  color: #e4d4af;
+  border-color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .field-filters button > span {
+  background: #2c3b28;
+  color: #bfccaa;
+}
+
+html[data-theme='dark'] .field-sort select {
+  background: #1c2b21;
+  color: #d5ddc5;
+  border-color: #47563c;
+}
+
+html[data-theme='dark'] .field-sort select:focus-visible {
+  outline-color: var(--focus-ring);
+}
+
+html[data-theme='dark'] .contender-card {
+  background: linear-gradient(145deg, #1c2c23, #17251e);
+  border-color: #34442f;
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .contender-card:hover {
+  border-color: #75835b;
+  box-shadow: 0 8px 24px #00000024;
+}
+
+html[data-theme='dark'] .contender-card.is-selected {
+  background: linear-gradient(145deg, #344030, #253321);
+  border-color: #c0ab77;
+  box-shadow:
+    inset 0 0 0 1px #c0ab7738,
+    0 8px 24px #00000018;
+}
+
+html[data-theme='dark'] .contender-number {
+  color: color-mix(in srgb, var(--runner-color) 62%, #f6efda);
+  background: color-mix(in srgb, var(--runner-color) 15%, transparent);
+  border-color: color-mix(in srgb, var(--runner-color) 35%, transparent);
+}
+
+html[data-theme='dark'] .is-in-race .contender-availability {
+  color: #c0cfa5;
+}
+
+html[data-theme='dark'] .is-in-race .contender-availability > span {
+  background: #b4c78e;
+}
+
+html[data-theme='dark'] .contender-arrow {
+  color: #c7d1ac;
+}
+
+html[data-theme='dark'] .contender-condition > strong {
+  color: #d6ddbf;
+}
+
+html[data-theme='dark'] .contender-meter > span {
+  background: color-mix(in srgb, var(--runner-color) 55%, #b9c495);
+}
+
+/* Classic racing and the final podium share the evening palette. */
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-heading {
+  color: #6c7b61;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-heading > span:first-child {
+  color: #8b6b37;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-places li {
+  background: #f1f3e9;
+  border-color: #dce2d1;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-places .podium-winner {
+  background: #f5efdf;
+  border-color: #d2bd8c;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-rank {
+  color: #6c7d59;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-winner .podium-rank {
+  color: #8a672e;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-details strong {
+  color: #2b4432;
+}
+
+html:not([data-theme='dark']) .race-experience > .race-podium .podium-details small {
+  color: #657456;
+}
+
+html[data-theme='dark'] .track-panel {
+  background: #14281d;
+  border-color: #344b32;
+}
+
+html[data-theme='dark'] .racecourse {
+  background: #233f2b;
+  border-color: #69815440;
+}
+
+html[data-theme='dark'] .track-empty {
+  background: radial-gradient(ellipse at 50% 50%, #10261aee, #142c1eab 55%, #13281b55);
+}
+
+html[data-theme='dark'] .track-empty .button {
+  background: #d2d6ac;
+  color: #23351f;
+}
+
+html[data-theme='dark'] .track-empty .button:hover {
+  background: #e1e3bf;
+}
+
+html[data-theme='dark'] .pause-overlay > span {
+  color: #f0e6cc;
+  border-color: #baa16d70;
+  background: #1c2d20ec;
+}
+
+html[data-theme='dark'] .race-experience > .race-podium {
+  color: var(--text-primary);
+}
+
+html[data-theme='dark'] .podium-heading {
+  color: #afbd9c;
+}
+
+html[data-theme='dark'] .podium-heading > span:first-child {
+  color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .podium-places li {
+  background: #a9c08107;
+  border-color: #a9c08125;
+}
+
+html[data-theme='dark'] .podium-places .podium-winner {
+  background: #d1b5800e;
+  border-color: #d1b58050;
+}
+
+html[data-theme='dark'] .podium-rank {
+  color: #a6b38c;
+}
+
+html[data-theme='dark'] .podium-winner .podium-rank {
+  color: var(--accent-gold);
+}
+
+html[data-theme='dark'] .podium-details strong {
+  color: #eeeade;
+}
+
+html[data-theme='dark'] .podium-details small {
+  color: #b4c09f;
+}
+
+/* Native dialogs keep the same tonal depth and readable instructional text. */
+html[data-theme='dark'] .modal {
+  background: #1b2b22;
+  border-color: #536144;
+  color: var(--text-primary);
+  box-shadow:
+    0 30px 100px #00000075,
+    inset 0 1px 0 #ffffff08;
+}
+
+html[data-theme='dark'] .modal::backdrop {
+  background: #06100bcc;
+}
+
+html[data-theme='dark'] :is(.modal .eyebrow, .modal-close) {
+  color: #bfccaa;
+}
+
+html[data-theme='dark'] .how-to li::before {
+  background: #3c4530;
+  color: #e1cc9b;
+}
+
+html[data-theme='dark'] :is(.how-to p, .help-note p, .reset-modal > p) {
+  color: #b6c3a6;
+}
+
+html[data-theme='dark'] .help-note {
+  background: #26392a;
+  color: #c5d1a6;
+}
+
+/* Deliberate surface transitions; the race's transforms and clock stay untouched. */
+html,
+body,
+.club-intro,
+.race-experience,
+.program-panel,
+.field-profile,
+.modal,
+.experience-rounds > div,
+.round-card,
+.round-heading,
+.tabs button,
+.view-switch button,
+.scene-camera button,
+.field-sort select,
+.field-filters button {
+  transition:
+    background-color var(--theme-duration) ease,
+    color var(--theme-duration) ease,
+    border-color var(--theme-duration) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-duration: 0ms;
+  }
+}

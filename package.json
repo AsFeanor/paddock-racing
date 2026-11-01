@@ -1,0 +1,32 @@
+{
+  "name": "paddock-horse-racing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "pinia": "3.0.4",
+    "three": "0.187.0",
+    "vue": "3.5.42"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/three": "0.187.0",
+    "@vitejs/plugin-vue": "6.0.9",
+    "playwright": "1.62.1",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.10",
+    "vue-tsc": "2.2.12"
+  }
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f4f0" />
+    <script>
+      // Apply the saved appearance before the first paint.
+      ;(() => {
+        let saved
+        try {
+          saved = localStorage.getItem('paddock-theme')
+        } catch {}
+        const theme =
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+        document.documentElement.style.backgroundColor = theme === 'dark' ? '#101b18' : '#f5f4ee'
+        document.querySelector('meta[name="theme-color"]').content =
+          theme === 'dark' ? '#101b18' : '#f5f4ee'
+      })()
+    </script>
+    <link
+      rel="preload"
+      as="image"
+      href="%BASE_URL%assets/race-hero.png"
+      media="(prefers-reduced-motion: no-preference)"
+    />
+    <meta
+      name="description"
+      content="Build a six-round race day, meet the field, and watch every finish. An interactive horse racing simulator."
+    />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Paddock — A day at the races</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
