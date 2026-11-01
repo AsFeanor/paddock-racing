@@ -78,7 +78,7 @@ Switching away from the browser tab pauses a running race. Opening the instructi
 
 ### Explore the racecourse
 
-- **Grandstand** shows the whole course, **Trackside** follows the selected horse (or the leader), and **Finish line** frames the finish. Drag the scene to adjust the viewing angle.
+- **Grandstand** shows the whole course, **Trackside** follows the selected horse (or the leader), and **Finish line** frames the finish. Starting a race day selects Trackside automatically; pause/resume retains the chosen camera. Drag the scene to adjust the viewing angle.
 - Click a horse, its numbered label, or a leading-runner chip to select it and switch to the following camera. The same selection appears in the paddock profile.
 - **Meet the contenders** shows all 20 horses. Filter to **This race**, sort by number, condition or name, and select a card to inspect that horse. **Follow on track** is available when the horse belongs to the current line-up.
 - **Classic view** is available at any time and retains the race's time, progress and results. If the 3D scene cannot load or its graphics context becomes unavailable, the interface falls back to Classic view.

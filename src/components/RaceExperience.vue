@@ -21,6 +21,12 @@ const emit = defineEmits<{ select: [id: string] }>()
 const race = useRaceStore()
 const view = ref<'scene' | 'classic'>('scene')
 const camera = ref<'overview' | 'follow' | 'finish'>('overview')
+watch(
+  () => race.status,
+  (status, previous) => {
+    if (status === 'running' && previous !== 'paused') camera.value = 'follow'
+  },
+)
 const sceneReady = ref(false)
 const sceneFailed = ref(false)
 const sceneVersion = ref(0)

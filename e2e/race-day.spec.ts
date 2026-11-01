@@ -422,7 +422,8 @@ test('3D camera and followed-runner controls preserve a paused race across prese
   const grandstand = page.getByRole('button', { name: /Grandstand$/ })
   const trackside = page.getByRole('button', { name: /Trackside$/ })
   const finishLine = page.getByRole('button', { name: /Finish line$/ })
-  await expect(grandstand).toHaveAttribute('aria-pressed', 'true')
+  await expect(trackside).toHaveAttribute('aria-pressed', 'true')
+  await expect(grandstand).toHaveAttribute('aria-pressed', 'false')
 
   const followedRunner = page.locator('.order-chips > button').first()
   const followedName = (await followedRunner.textContent())!.replace(/^\s*\d+\s*/, '').trim()
