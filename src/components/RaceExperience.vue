@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from 'vue'
+import {
+  computed,
+  onBeforeUnmount,
+  ref,
+  shallowRef,
+  watch,
+  type Component,
+  type ShallowRef,
+} from 'vue'
 import { useRaceStore } from '../stores/race'
 import { ROUND_DISTANCES } from '../domain/race'
 import RaceTrack from './RaceTrack.vue'
 import RacePodium from './RacePodium.vue'
 import AppIcon from './AppIcon.vue'
+import { loadWithTimeout } from '../scene/loadWithTimeout'
 
-const RaceScene = defineAsyncComponent(() => import('./RaceScene.vue'))
+const RaceScene: ShallowRef<Component | null> = shallowRef(null)
 const props = defineProps<{ selectedHorseId: string | null; theme: 'light' | 'dark' }>()
 const emit = defineEmits<{ select: [id: string] }>()
 const race = useRaceStore()
@@ -15,6 +24,37 @@ const camera = ref<'overview' | 'follow' | 'finish'>('overview')
 const sceneReady = ref(false)
 const sceneFailed = ref(false)
 const sceneVersion = ref(0)
+let sceneDownload: AbortController | undefined
+
+async function loadScene() {
+  if (RaceScene.value || sceneDownload) return
+  const controller = new AbortController()
+  sceneDownload = controller
+  try {
+    const module = await loadWithTimeout(() => import('./RaceScene.vue'), 15_000, controller.signal)
+    if (!controller.signal.aborted) RaceScene.value = module.default
+  } catch {
+    if (!controller.signal.aborted) fallback()
+  } finally {
+    if (sceneDownload === controller) sceneDownload = undefined
+  }
+}
+
+function cancelSceneDownload() {
+  const download = sceneDownload
+  sceneDownload = undefined
+  download?.abort()
+}
+
+watch(
+  view,
+  (next) => {
+    if (next === 'scene') void loadScene()
+    else cancelSceneDownload()
+  },
+  { immediate: true },
+)
+onBeforeUnmount(cancelSceneDownload)
 const cameraOptions = [
   { id: 'overview' as const, name: 'Grandstand', number: '01' },
   { id: 'follow' as const, name: 'Trackside', number: '02' },
@@ -60,7 +100,7 @@ function selectHorse(id: string) {
 }
 function followHorse() {
   if (selectedActive.value) {
-    view.value = 'scene'
+    switchView('scene')
     camera.value = 'follow'
   }
 }
@@ -69,6 +109,7 @@ function fallback() {
   view.value = 'classic'
 }
 function switchView(next: 'scene' | 'classic') {
+  if (next === view.value) return
   view.value = next
   if (next === 'scene') {
     sceneReady.value = false
@@ -115,7 +156,9 @@ defineExpose({ followHorse })
         </div>
       </div>
       <div class="scene-stage" :class="{ 'is-loading': !sceneReady }">
-        <RaceScene
+        <component
+          :is="RaceScene"
+          v-if="RaceScene"
           :theme="theme"
           :key="sceneVersion"
           :selected-horse-id="selectedActive ? selectedHorseId : null"

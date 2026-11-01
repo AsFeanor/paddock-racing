@@ -39,7 +39,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-An existing Chrome installation can be used with `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. The suite defines ten scenarios at desktop (1440 × 1000) and mobile (390 × 844) viewports, for 20 tests. It checks line-up validity, pause/resume, sequential results, resetting, keyboard navigation, horizontal overflow, contender filtering and selection, camera controls, theme persistence, and the opening's reload, Escape and reduced-motion behavior. It controls browser time rather than accessing the application store. Core racing scenarios use Classic view; the 3D-specific scenario explicitly skips when WebGL 2 is unavailable. `npm run test:e2e -- --list` lists the scenarios without launching a browser.
+An existing Chrome installation can be used with `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. The browser suite runs at desktop (1440 × 1000) and mobile (390 × 844) viewports. It covers line-ups, pause/resume, sequential results, resets, keyboard navigation, responsive layout, contender selection, camera controls, theme persistence and the opening. Tests control browser time rather than accessing the application store. Core racing scenarios use Classic view; the 3D scenario skips when WebGL 2 is unavailable. `npm run test:e2e -- --list` lists the scenarios without launching a browser.
 
 ## Using the app
 
@@ -115,13 +115,9 @@ The animated 3D horse is **Horse by Quaternius**, released under **CC0 1.0** and
 
 ## Verification
 
-All 22 unit tests and the production build pass. The suite also checks the actual bundled horse model at idle and across gallop poses, preventing a regression where stale skeleton bounds made the horses almost invisible. The domain tests cover generation constraints, condition influence, monotonic progress, exact finish positions, tie ordering, pause/resume, stale-result prevention, sequential completion, large time steps and the leader after multiple horses finish. Type checking and the production build are also part of the available checks.
+Clean installation, type checking, the production build and the 22 core unit tests have passed. Unit coverage includes generation constraints, condition influence, monotonic movement, finish ordering, pause/resume, resets and sequential completion. A regression test loads the actual horse model and verifies its bounds at idle and during gallop poses.
 
-Playwright scenarios are supplied separately from the unit suite. In the development environment, the standalone Chrome process was blocked before test execution; this is not recorded as a passing E2E run. Test discovery succeeded for all 20 cases (ten scenarios across two viewports), including the appearance and opening additions. The updated browser suite has not been executed; discovery does not establish that those scenarios pass.
-
-Earlier interactive checks of the Classic presentation verified all six rounds and 60 ordered result entries, pause/resume, resetting from the Results panel, keyboard tab navigation, and a 390 px mobile layout without horizontal overflow. The subsequent 3D presentation was also checked interactively: all six rounds completed, the final podium matched the results, camera presets and drag orbit worked, selecting a horse updated its profile and tracking camera, contender filtering and condition sorting worked, and switching between 3D and Classic retained paused race time. Desktop (1440 px) and mobile (390 px) layouts were inspected without horizontal overflow. These interactive checks remain separate from the unexecuted Playwright suite.
-
-The appearance update was checked in the in-app browser: the opening replayed after refresh, both Skip intro and Escape restored interaction, and the saved dark preference survived reload. Changing themes retained the paused race time. Day and night scenes, the dark contender cards, help dialog and Classic presentation were inspected. Mobile layouts at 390 px and 320 px had no horizontal overflow. The final preview produced no browser warnings or errors. Reduced-motion behavior is covered by the supplied browser scenario and code review; that scenario has not been executed in the standalone suite.
+Interactive browser checks covered all six rounds, complete results, camera and selection controls, theme switching, opening dismissal and 320–1440 px layouts. The automated end-to-end suite is being verified in CI; test discovery alone is not recorded as a passing run. The final workflow results will distinguish executed browser checks from these interactive checks.
 
 ## Scope
 

@@ -59,8 +59,7 @@ p {
   margin: 0;
 }
 h2,
-h3,
-.brand {
+h3 {
   font-family: 'Manrope', sans-serif;
 }
 ol {
@@ -93,49 +92,6 @@ ol {
 .skip-link:focus {
   top: 12px;
 }
-
-/* Club masthead and cinematic opener */
-.site-header {
-  height: 80px;
-  padding: 0 max(32px, calc((100vw - 1600px) / 2));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #e1e4d9;
-  background: #fcfbf6;
-}
-.brand {
-  text-decoration: none;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -1.6px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
-.brand img {
-  border-radius: 10px;
-}
-.brand-dot {
-  color: var(--orange);
-  margin-left: -10px;
-}
-.header-caption {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 2.3px;
-  color: #75806b;
-}
-.header-caption > span {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #819d60;
-  box-shadow: 0 0 0 4px #82936112;
-}
 .text-button {
   display: inline-flex;
   align-items: center;
@@ -153,128 +109,8 @@ main {
   padding: 27px 32px 0;
   margin: 0 auto;
 }
-.race-hero {
-  min-height: 296px;
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: #132e23;
-  border-radius: 13px;
-  color: #fbf8e9;
-  box-shadow: 0 9px 22px #1834250a;
-}
-.hero-image {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: 70%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 65% 15%;
-  z-index: -3;
-}
-.hero-shade {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, #102b20 0%, #102b20f5 20%, #102b208c 43%, #102b2000 68%),
-    linear-gradient(0deg, #102b20ab 0%, transparent 40%);
-  z-index: -2;
-}
-.hero-copy {
-  padding: 32px 40px 30px;
-  width: 58%;
-  position: relative;
-}
-.hero-kicker {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  color: #d5dfad;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 2.2px;
-}
-.hero-kicker > span {
-  width: 18px;
-  height: 1px;
-  background: #cbd6a3;
-}
-.hero-copy h1 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(37px, 3.45vw, 57px);
-  font-weight: 500;
-  letter-spacing: -1.7px;
-  line-height: 1.06;
-  margin: 17px 0 15px;
-}
-.hero-copy h1 em {
-  color: #e2e6bc;
-  font-weight: 500;
-}
-.hero-copy p {
-  font-size: 11px;
-  line-height: 1.75;
-  color: #bac7b4;
-  letter-spacing: 0.1px;
-}
-.hero-signature {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 22px;
-  color: #d0d8bc;
-  font-size: 7px;
-  letter-spacing: 1.8px;
-}
-.signature-line {
-  height: 1px;
-  width: 25px;
-  background: #c4cfaa66;
-}
-.hero-ticket {
-  position: absolute;
-  top: 27px;
-  right: 29px;
-  width: 84px;
-  height: 100px;
-  border: 1px solid #e5edcd65;
-  border-radius: 42px 42px 5px 5px;
-  background: #132c231a;
-  backdrop-filter: blur(8px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(9deg);
-}
-.hero-ticket strong {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 500;
-  font-size: 39px;
-  line-height: 1.2;
-}
-.hero-ticket span {
-  font-size: 5px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-.hero-caption {
-  position: absolute;
-  bottom: 23px;
-  right: 32px;
-  font-size: 7px;
-  letter-spacing: 2px;
-  color: #dce2c3c9;
-}
 
 /* Race day controls */
-.page-intro {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 30px;
-}
 .eyebrow {
   display: block;
   font-size: 8px;
@@ -282,32 +118,6 @@ main {
   letter-spacing: 1.8px;
   line-height: 1.5;
   color: #7b856e;
-}
-.intro-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 8px;
-  color: #7c8d65;
-}
-.intro-eyebrow > span {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #8f9c70;
-}
-.page-intro h2 {
-  font-size: 26px;
-  letter-spacing: -0.9px;
-  font-weight: 650;
-  margin: 4px 0 5px;
-}
-.page-intro h2 > span {
-  color: var(--orange);
-}
-.page-intro p {
-  font-size: 12px;
-  color: #7b8374;
 }
 .main-actions {
   display: flex;
@@ -361,59 +171,8 @@ main {
   border-color: #e2e5d8;
   box-shadow: none;
 }
-.day-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 55px;
-  margin: 19px 0 20px;
-  border-top: 1px solid #e0e4d5;
-  border-bottom: 1px solid #e0e4d5;
-}
-.summary-items {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  color: #7f8776;
-  font-size: 11px;
-}
-.summary-items strong {
-  color: #4b5f3d;
-  font-size: 15px;
-  font-weight: 600;
-  margin-right: 5px;
-  font-variant-numeric: tabular-nums;
-}
-.summary-items i {
-  height: 13px;
-  width: 1px;
-  background: #dce1cf;
-}
-.summary-note {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  font-size: 10px;
-  color: #89917d;
-}
-.selection-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #8fa66a;
-  display: inline-block;
-}
-.reset-button {
-  font-size: 11px;
-}
 
-/* The three race-day surfaces */
-.dashboard {
-  display: grid;
-  grid-template-columns: 258px minmax(0, 1fr) 278px;
-  gap: 18px;
-  align-items: stretch;
-}
+/* Shared race panels */
 .panel {
   background: var(--paper);
   border: 1px solid #e1e5d7;
@@ -435,116 +194,12 @@ h2 {
   line-height: 1.3;
   margin-top: 4px;
 }
-.count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 25px;
-  height: 23px;
-  margin-left: 3px;
-  background: #f0f1e7;
-  color: #84926d;
-  font:
-    500 11px 'DM Sans',
-    sans-serif;
-  vertical-align: 3px;
-  letter-spacing: 0;
-  border-radius: 5px;
-}
 .color-dot {
   display: inline-block;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-}
-
-/* Paddock roster */
-.roster {
-  display: flex;
-  flex-direction: column;
-}
-.roster .panel-heading {
-  padding-bottom: 16px;
-}
-.roster-labels {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 16px 7px;
-  padding: 10px 2px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: #89947a;
-}
-.horse-list {
-  padding: 0 10px;
-  flex: 1;
-}
-.horse-list li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 34px;
-  border-radius: 5px;
-  padding: 3px 6px;
-  border-bottom: 1px solid #f0f1e9;
-  font-size: 11px;
-  transition: background 0.25s;
-}
-.horse-list li.selected {
-  background: #eef2e3;
-  border-color: transparent;
-}
-.horse-list li:hover {
-  background: #f0f2e8;
-}
-.horse-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-  flex: 1;
-}
-.roster-number {
-  color: #9aa48d;
-  width: 16px;
-  font-size: 9px;
-  font-variant-numeric: tabular-nums;
-}
-.condition {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  width: 45px;
-  font-size: 10px;
-  color: #6b7a59;
-  font-variant-numeric: tabular-nums;
-}
-.condition-meter {
-  width: 20px;
-  height: 3px;
-  border-radius: 9px;
-  overflow: hidden;
-  background: #e7ecdc;
-}
-.condition-meter > span {
-  display: block;
-  height: 100%;
-  border-radius: 9px;
-  background: #9aaf73;
-}
-.roster-note {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 16px;
-  margin-top: 12px;
-  border-top: 1px solid var(--line);
-  font-size: 9px;
-  color: #839173;
 }
 
 /* Main racecourse: a night-green sporting canvas */
@@ -1188,36 +843,6 @@ h2 {
 }
 
 /* Supporting content and native dialogs */
-.page-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 25px 0 30px;
-  font-size: 10px;
-  color: #89977a;
-}
-.page-footer > span {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.page-footer > span:last-child {
-  font-size: 7px;
-  letter-spacing: 1.5px;
-}
-.page-footer i {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #a6b190;
-}
-.footer-mark {
-  font:
-    italic 22px 'Playfair Display',
-    Georgia,
-    serif;
-  color: #6f8655;
-}
 .modal {
   border: 1px solid #d8e0c9;
   border-radius: 13px;
@@ -1313,112 +938,19 @@ h2 {
     opacity: 0.75;
   }
 }
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.race-hero {
-  animation: reveal 0.5s ease-out both;
-}
-.dashboard {
-  animation: reveal 0.6s 0.07s ease-out both;
-}
 
 /* Reflow retains the track as the primary experience. */
 @media (min-width: 1500px) {
-  .dashboard {
-    grid-template-columns: 282px minmax(0, 1fr) 300px;
-    gap: 20px;
-  }
-  .horse-list li {
-    min-height: 36px;
-  }
   .lane {
     height: 57px;
   }
   .program-content {
     max-height: 720px;
   }
-  .hero-copy {
-    padding-left: 48px;
-  }
-  .race-hero {
-    min-height: 316px;
-  }
 }
 @media (max-width: 1180px) {
   main {
     padding: 23px 24px 0;
-  }
-  .site-header {
-    padding: 0 25px;
-  }
-  .dashboard {
-    grid-template-columns: minmax(0, 1fr) 285px;
-    gap: 16px;
-  }
-  .roster {
-    grid-column: 1/-1;
-    grid-row: 2;
-  }
-  .horse-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 25px;
-    padding: 0 15px;
-  }
-  .horse-list li:nth-child(-n + 10) {
-    grid-column: 1;
-  }
-  .horse-list li:nth-child(n + 11) {
-    grid-column: 2;
-  }
-  .horse-list li:nth-child(11) {
-    grid-row: 1;
-  }
-  .horse-list li:nth-child(12) {
-    grid-row: 2;
-  }
-  .horse-list li:nth-child(13) {
-    grid-row: 3;
-  }
-  .horse-list li:nth-child(14) {
-    grid-row: 4;
-  }
-  .horse-list li:nth-child(15) {
-    grid-row: 5;
-  }
-  .horse-list li:nth-child(16) {
-    grid-row: 6;
-  }
-  .horse-list li:nth-child(17) {
-    grid-row: 7;
-  }
-  .horse-list li:nth-child(18) {
-    grid-row: 8;
-  }
-  .horse-list li:nth-child(19) {
-    grid-row: 9;
-  }
-  .horse-list li:nth-child(20) {
-    grid-row: 10;
-  }
-  .roster-labels {
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-  .hero-copy h1 {
-    font-size: 46px;
-  }
-  .hero-copy {
-    padding-left: 30px;
-    width: 65%;
   }
   .running-space {
     left: 79px;
@@ -1442,85 +974,8 @@ h2 {
   }
 }
 @media (max-width: 760px) {
-  .site-header {
-    height: 69px;
-    padding: 0 18px;
-  }
-  .brand {
-    font-size: 27px;
-  }
-  .brand img {
-    width: 29px;
-    height: 29px;
-  }
-  .header-caption {
-    display: none;
-  }
   main {
     padding: 17px 15px 0;
-  }
-  .race-hero {
-    min-height: 285px;
-    border-radius: 10px;
-  }
-  .hero-copy {
-    padding: 27px 23px 25px;
-    width: 90%;
-  }
-  .hero-copy h1 {
-    font-size: 43px;
-    line-height: 1.08;
-    margin-top: 22px;
-    letter-spacing: -1px;
-  }
-  .hero-copy p {
-    font-size: 10px;
-  }
-  .hero-kicker {
-    font-size: 7px;
-    letter-spacing: 1.7px;
-  }
-  .hero-image {
-    width: 100%;
-    object-position: 61% 50%;
-    opacity: 0.7;
-  }
-  .hero-shade {
-    background:
-      linear-gradient(90deg, #102b20ed, #102b20bb 45%, #102b2010),
-      linear-gradient(0deg, #102b20ba, transparent);
-  }
-  .hero-signature {
-    font-size: 6px;
-    margin-top: 21px;
-    letter-spacing: 1.4px;
-  }
-  .hero-ticket {
-    width: 57px;
-    height: 72px;
-    top: 18px;
-    right: 17px;
-    opacity: 0.8;
-  }
-  .hero-ticket strong {
-    font-size: 28px;
-  }
-  .hero-ticket span {
-    font-size: 4px;
-    letter-spacing: 0.5px;
-  }
-  .hero-caption {
-    display: none;
-  }
-  .page-intro {
-    display: block;
-    margin-top: 25px;
-  }
-  .page-intro h2 {
-    font-size: 25px;
-  }
-  .page-intro p {
-    font-size: 11px;
   }
   .main-actions {
     display: flex;
@@ -1534,42 +989,11 @@ h2 {
     font-size: 11px;
     padding: 10px 12px;
   }
-  .day-summary {
-    margin: 18px 0 17px;
-    min-height: 50px;
-  }
-  .summary-items {
-    gap: 11px;
-    font-size: 9px;
-  }
-  .summary-items strong {
-    font-size: 13px;
-    margin-right: 2px;
-  }
-  .summary-note {
-    display: none;
-  }
-  .reset-button {
-    font-size: 0;
-    gap: 0;
-  }
-  .reset-button svg {
-    width: 17px;
-    height: 17px;
-  }
-  .dashboard {
-    display: flex;
-    flex-direction: column;
-    gap: 17px;
-  }
   .track-panel {
     order: 0;
   }
   .program-panel {
     order: 1;
-  }
-  .roster {
-    order: 2;
   }
   .panel-heading {
     padding: 21px 18px 16px;
@@ -1684,30 +1108,6 @@ h2 {
     max-width: 280px;
     margin: 22px auto 0;
   }
-  .horse-list {
-    gap: 0;
-    padding: 0 9px;
-    grid-template-columns: 1fr;
-  }
-  .horse-list li:nth-child(n) {
-    grid-column: auto;
-    grid-row: auto;
-    min-height: 40px;
-    font-size: 12px;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-  .roster-note {
-    font-size: 9px;
-  }
-  .page-footer {
-    font-size: 9px;
-    padding: 22px 0;
-    gap: 10px;
-  }
-  .page-footer > span:last-child {
-    display: none;
-  }
   .modal {
     padding: 28px 23px;
   }
@@ -1720,18 +1120,6 @@ h2 {
   }
 }
 @media (max-width: 360px) {
-  .hero-copy h1 {
-    font-size: 36px;
-  }
-  .hero-ticket {
-    display: none;
-  }
-  .hero-copy {
-    width: 100%;
-  }
-  .summary-items {
-    gap: 8px;
-  }
   .track-heading h2 {
     font-size: 23px;
   }

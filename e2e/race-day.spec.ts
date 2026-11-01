@@ -334,6 +334,13 @@ test('3D camera and followed-runner controls preserve a paused race across prese
   await expect(page.locator('.race-experience .scene-loading')).toHaveCount(0, { timeout: 15_000 })
   await page.clock.runFor(32)
   await expect(page.locator('.race-scene-canvas')).toBeVisible()
+  const originalCanvas = await page.locator('.race-scene-canvas').elementHandle()
+  await page.getByRole('button', { name: '3D experience', exact: true }).click()
+  expect(
+    await page
+      .locator('.race-scene-canvas')
+      .evaluate((current, original) => current === original, originalCanvas),
+  ).toBe(true)
   const grandstand = page.getByRole('button', { name: /Grandstand$/ })
   const trackside = page.getByRole('button', { name: /Trackside$/ })
   const finishLine = page.getByRole('button', { name: /Finish line$/ })
@@ -364,4 +371,18 @@ test('3D camera and followed-runner controls preserve a paused race across prese
       .evaluateAll((elements) => elements.map((element) => (element as HTMLElement).style.left)),
   ).toEqual(pausedPositions)
   await expectNoHorizontalOverflow(page)
+})
+
+test('a failed 3D module download falls back to a working Classic race', async ({ page }) => {
+  await page.route('**/assets/RaceScene-*.js', (route) => route.abort('failed'))
+  await page.reload()
+  await expect(page.locator('.scene-fallback')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.locator('.scene-loading')).toHaveCount(0)
+  await startRace(page)
+  await page.clock.fastForward(1000)
+  await expect(page.locator('.race-clock strong')).not.toHaveText('0:00.0')
 })
