@@ -85,6 +85,12 @@ test.beforeEach(async ({ page, colorScheme }) => {
 test.describe('appearance preferences', () => {
   test.use({ colorScheme: 'light', contextOptions: { reducedMotion: 'reduce' } })
 
+  test.beforeEach(async ({ page }) => {
+    // Theme persistence and motion preferences are DOM behavior. Keep optional
+    // software-WebGL startup from blocking their media-query and reload checks.
+    await page.route(/\/assets\/RaceScene-[^/]+\.js(?:\?.*)?$/, (route) => route.abort('failed'))
+  })
+
   test('theme switching persists across reloads in both directions', async ({ page }) => {
     await navigateApp(page)
     await expectPageReady(page)
