@@ -131,6 +131,15 @@ test.describe('cinematic opening', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } })
 
   test('returns on reload and Escape restores page interaction', async ({ page }) => {
+    // The entrance is DOM/CSS. Optional software-WebGL startup can block the
+    // renderer and starve even matchMedia reads on a busy CI worker. Keep that
+    // independent of this test; the positive 3D scenario below loads the real scene.
+    await page.route(/\/assets\/RaceScene-[^/]+\.js(?:\?.*)?$/, (route) => route.abort('failed'))
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    expect(
+      await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+      'Motion should be enabled before the application starts',
+    ).toBe(false)
     await installPausedClock(page)
     await navigateApp(page, 'no-preference')
     const opening = page.getByRole('region', { name: 'Welcome to Paddock', exact: true })
