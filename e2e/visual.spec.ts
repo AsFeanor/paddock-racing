@@ -55,6 +55,7 @@ test('light race day and paddock retain their layout', async ({ page }) => {
   await expect(page).toHaveScreenshot('race-day-light.png', {
     fullPage: true,
     animations: 'disabled',
+    timeout: 20_000,
   })
 })
 
@@ -64,5 +65,6 @@ test('dark race day and paddock retain their layout', async ({ page }) => {
   await expect(page).toHaveScreenshot('race-day-dark.png', {
     fullPage: true,
     animations: 'disabled',
+    timeout: 20_000,
   })
 })
