@@ -11,7 +11,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
-    reducedMotion: 'reduce',
+    contextOptions: { reducedMotion: 'reduce' },
     launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

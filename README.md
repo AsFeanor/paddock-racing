@@ -1,6 +1,10 @@
 # Paddock
 
+[![Checks](https://github.com/AsFeanor/paddock-racing/actions/workflows/checks.yml/badge.svg)](https://github.com/AsFeanor/paddock-racing/actions/workflows/checks.yml)
+
 A six-round horse racing simulator built with Vue 3, TypeScript, Pinia, Vite and Three.js. Generate a race program, explore a miniature 3D racecourse, follow a contender, and inspect the complete results of every round. A Classic view presents the same race as a two-dimensional track.
+
+[Live demo](https://paddock-racing.netlify.app/)
 
 ![Paddock racing in night mode](docs/preview-night.png)
 
@@ -14,6 +18,10 @@ A six-round horse racing simulator built with Vue 3, TypeScript, Pinia, Vite and
 | 3D scene  | Three.js 0.187, WebGL 2, local animated glTF model |
 | Build     | Vite 7.3                                           |
 | Tests     | Vitest 4.1, Playwright 1.62                        |
+
+## Deployment
+
+The Netlify project is connected to this repository and automatically deploys pushes to `main`. [`netlify.toml`](netlify.toml) selects Node.js 24, runs `npm run build` and publishes `dist`.
 
 ## Run locally
 
@@ -36,10 +44,20 @@ For browser tests:
 
 ```sh
 npx playwright install chromium
+npm run build
 npm run test:e2e
 ```
 
 An existing Chrome installation can be used with `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`. The browser suite runs at desktop (1440 × 1000) and mobile (390 × 844) viewports. It covers line-ups, pause/resume, sequential results, resets, keyboard navigation, responsive layout, contender selection, camera controls, theme persistence and the opening. Tests control browser time rather than accessing the application store. Core racing scenarios use Classic view; the 3D scenario skips when WebGL 2 is unavailable. `npm run test:e2e -- --list` lists the scenarios without launching a browser.
+
+For visual comparisons:
+
+```sh
+npm run test:visual
+npm run test:visual:update # Regenerate references after an intended UI change
+```
+
+The four visual cases cover light and dark themes at desktop and mobile sizes. They use a seeded roster, reduced motion and Classic view to keep layout comparisons independent of GPU rendering. Google Fonts requests are blocked in these tests so screenshots consistently use system font fallbacks. Reference images must be generated and compared in the same Ubuntu 24.04/Chromium environment as CI; run the update command there, inspect the images and commit approved baselines.
 
 ## Using the app
 
@@ -78,6 +96,8 @@ src/
   scene/course.ts               Procedural course geometry and resource disposal
   scene/model.ts                Skinned-horse normalization
   scene/model.test.ts           Regression check against the bundled GLB
+  scene/loadWithTimeout.ts      Bounded loading for the optional 3D presentation
+  scene/loadWithTimeout.test.ts  Async success, failure and timeout coverage
   components/
     OpeningSequence.vue         Skippable cinematic entrance and motion preference
     RaceExperience.vue          Presentation switch, camera controls and race telemetry
@@ -115,9 +135,9 @@ The animated 3D horse is **Horse by Quaternius**, released under **CC0 1.0** and
 
 ## Verification
 
-Clean installation, type checking, the production build and the 22 core unit tests have passed. Unit coverage includes generation constraints, condition influence, monotonic movement, finish ordering, pause/resume, resets and sequential completion. A regression test loads the actual horse model and verifies its bounds at idle and during gallop poses.
+Clean installation, type checking, the production build and 27 unit tests have passed. Unit coverage includes generation constraints, condition influence, monotonic movement, finish ordering, pause/resume, resets, sequential completion and bounded async loading. A regression test loads the actual horse model and verifies its bounds at idle and during gallop poses.
 
-Interactive browser checks covered all six rounds, complete results, camera and selection controls, theme switching, opening dismissal and 320–1440 px layouts. The automated end-to-end suite is being verified in CI; test discovery alone is not recorded as a passing run. The final workflow results will distinguish executed browser checks from these interactive checks.
+Interactive browser checks covered all six rounds, complete results, camera and selection controls, theme switching, opening dismissal and 320–1440 px layouts. [Checks](https://github.com/AsFeanor/paddock-racing/actions/workflows/checks.yml) runs the build, unit tests, end-to-end scenarios and visual comparisons on pushes and pull requests. The workflow badge and run reports provide the latest automated results.
 
 ## Scope
 

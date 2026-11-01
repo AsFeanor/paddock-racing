@@ -18,30 +18,76 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(contentWidth).toBeLessThanOrEqual(page.viewportSize()!.width)
 }
 
-test.beforeEach(async ({ page }) => {
+async function installPausedClock(page: Page) {
   // Advance actual browser time instead of mutating application state.
   await page.clock.install({ time: new Date('2026-01-01T12:00:00Z') })
   await page.clock.pauseAt(new Date('2026-01-01T12:00:01Z'))
-  await page.goto('/')
-  await page.clock.runFor(32)
-  // The clock is paused, so explicitly dismiss the opening when motion is on.
-  // Reduced-motion projects bypass it immediately without a fullscreen wait.
-  const skipIntro = page.getByRole('button', { name: 'Skip intro', exact: true })
-  if (await skipIntro.isVisible()) await skipIntro.click()
+}
+
+async function navigateApp(
+  page: Page,
+  motion: 'reduce' | 'no-preference' = 'reduce',
+  reload = false,
+) {
+  // Apply media on the page before every navigation, rather than letting a
+  // conditional intro skip hide a missing emulation preference after reload.
+  await page.emulateMedia({ reducedMotion: motion })
+  if (reload) await page.reload({ waitUntil: 'domcontentloaded' })
+  else await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect
+    .poll(
+      () => page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+      { message: `The page should expose reduced motion: ${motion}` },
+    )
+    .toBe(motion === 'reduce')
+}
+
+async function expectPageReady(page: Page) {
+  await expect(page.getByRole('region', { name: 'Welcome to Paddock', exact: true })).toHaveCount(0)
   await expect(page.locator('.app-shell')).toHaveJSProperty('inert', false)
-  // Keep core race-rule coverage independent of GPU availability. The 3D
-  // presentation has its own scenario below and shares this same race state.
-  await page.getByRole('button', { name: 'Classic view', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+}
+
+async function prepareRacePage(page: Page) {
+  await installPausedClock(page)
+  // Let the core rules run without constructing a GPU scene first. The real
+  // module is released after selecting Classic and remains available to the
+  // dedicated positive 3D scenario below.
+  let releaseScene!: () => void
+  const classicSelected = new Promise<void>((resolve) => {
+    releaseScene = resolve
+  })
+  await page.route(/\/assets\/RaceScene-[^/]+\.js(?:\?.*)?$/, async (route) => {
+    await classicSelected
+    await route.continue()
+  })
+  try {
+    await navigateApp(page)
+    await page.clock.runFor(32)
+    await expectPageReady(page)
+    await page.getByRole('button', { name: 'Classic view', exact: true }).click()
+    await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  } finally {
+    releaseScene()
+  }
+}
+
+test.beforeEach(async ({ page, colorScheme }) => {
+  // Remote font latency is unrelated to these behavior assertions.
+  await page.route(/https:\/\/fonts\.(?:googleapis|gstatic)\.com\//, (route) => route.abort())
+  await page.emulateMedia({
+    colorScheme: colorScheme ?? 'light',
+  })
 })
 
 test.describe('appearance preferences', () => {
-  test.use({ colorScheme: 'light', reducedMotion: 'reduce' })
+  test.use({ colorScheme: 'light', contextOptions: { reducedMotion: 'reduce' } })
 
   test('theme switching persists across reloads in both directions', async ({ page }) => {
+    await navigateApp(page)
+    await expectPageReady(page)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
     await page.getByRole('button', { name: 'Switch to dark mode', exact: true }).click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
@@ -50,13 +96,15 @@ test.describe('appearance preferences', () => {
     ).toBeVisible()
     expect(await page.evaluate(() => localStorage.getItem('paddock-theme'))).toBe('dark')
 
-    await page.reload()
+    await navigateApp(page, 'reduce', true)
+    await expectPageReady(page)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
     await page.getByRole('button', { name: 'Switch to light mode', exact: true }).click()
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
     expect(await page.evaluate(() => localStorage.getItem('paddock-theme'))).toBe('light')
 
-    await page.reload()
+    await navigateApp(page, 'reduce', true)
+    await expectPageReady(page)
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
     await expect(
       page.getByRole('button', { name: 'Switch to dark mode', exact: true }),
@@ -64,7 +112,10 @@ test.describe('appearance preferences', () => {
   })
 
   test('reduced motion bypasses the opening without advancing the clock', async ({ page }) => {
-    await page.reload()
+    await installPausedClock(page)
+    await navigateApp(page)
+    await expectPageReady(page)
+    await navigateApp(page, 'reduce', true)
     await expect(page.getByRole('region', { name: 'Welcome to Paddock', exact: true })).toHaveCount(
       0,
     )
@@ -77,13 +128,17 @@ test.describe('appearance preferences', () => {
 })
 
 test.describe('cinematic opening', () => {
-  test.use({ reducedMotion: 'no-preference' })
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } })
 
   test('returns on reload and Escape restores page interaction', async ({ page }) => {
+    await installPausedClock(page)
+    await navigateApp(page, 'no-preference')
     const opening = page.getByRole('region', { name: 'Welcome to Paddock', exact: true })
-    await expect(opening).toHaveCount(0)
+    await expect(opening).toBeVisible()
+    await page.getByRole('button', { name: 'Skip intro', exact: true }).click()
+    await expectPageReady(page)
 
-    await page.reload()
+    await navigateApp(page, 'no-preference', true)
     await expect(opening).toBeVisible()
     await expect(page.locator('.app-shell')).toHaveJSProperty('inert', true)
     await expect(page.getByRole('button', { name: 'Skip intro', exact: true })).toBeFocused()
@@ -96,6 +151,7 @@ test.describe('cinematic opening', () => {
 })
 
 test('generates six valid line-ups from a stable twenty-horse paddock', async ({ page }) => {
+  await prepareRacePage(page)
   await expect(page.getByRole('button', { name: 'Start racing', exact: true })).toBeDisabled()
   await expect(page.locator('.contender-grid > li')).toHaveCount(20)
   const roster = await page.locator('.contender-grid .contender-name').allTextContents()
@@ -125,6 +181,7 @@ test('generates six valid line-ups from a stable twenty-horse paddock', async ({
 test('pause freezes both displayed time and runners, and resume continues the same round', async ({
   page,
 }) => {
+  await prepareRacePage(page)
   await startRace(page)
   await page.clock.fastForward(1000)
   await expect(page.locator('.race-clock strong')).not.toHaveText('0:00.0')
@@ -154,6 +211,7 @@ test('pause freezes both displayed time and runners, and resume continues the sa
 test('publishes each completed round and preserves six complete ordered result lists', async ({
   page,
 }) => {
+  await prepareRacePage(page)
   await startRace(page)
   // At 8x speed, 12 real seconds completes round one, but cannot finish round two.
   await page.clock.fastForward(12_000)
@@ -204,6 +262,7 @@ test('publishes each completed round and preserves six complete ordered result l
 })
 
 test('reset requires confirmation, clears results, and retains the program', async ({ page }) => {
+  await prepareRacePage(page)
   await generateProgram(page)
   const firstLineup = await page.locator('#round-1 > li span:nth-child(3)').allTextContents()
   await page.getByRole('button', { name: 'Start racing', exact: true }).click()
@@ -234,6 +293,7 @@ test('reset requires confirmation, clears results, and retains the program', asy
 test('keyboard tab navigation and instructions work without progressing a paused race', async ({
   page,
 }) => {
+  await prepareRacePage(page)
   await generateProgram(page)
   const program = page.getByRole('tab', { name: 'Program 6', exact: true })
   const results = page.getByRole('tab', { name: 'Results 0', exact: true })
@@ -262,6 +322,7 @@ test('keyboard tab navigation and instructions work without progressing a paused
 test('filters the field, sorts by condition and name, and selects a contender without changing the draw', async ({
   page,
 }) => {
+  await prepareRacePage(page)
   const field = page.getByRole('region', { name: 'Meet the contenders.' })
   const cards = field.locator('.contender-grid > li')
   const names = field.locator('.contender-name')
@@ -310,6 +371,8 @@ test('filters the field, sorts by condition and name, and selects a contender wi
 test('3D camera and followed-runner controls preserve a paused race across presentation changes', async ({
   page,
 }) => {
+  test.setTimeout(90_000)
+  await prepareRacePage(page)
   const supportsWebGL = await page.evaluate(() => {
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('webgl2')
@@ -374,8 +437,11 @@ test('3D camera and followed-runner controls preserve a paused race across prese
 })
 
 test('a failed 3D module download falls back to a working Classic race', async ({ page }) => {
+  await prepareRacePage(page)
   await page.route('**/assets/RaceScene-*.js', (route) => route.abort('failed'))
-  await page.reload()
+  await navigateApp(page, 'reduce', true)
+  await expectPageReady(page)
+  await page.clock.runFor(32)
   await expect(page.locator('.scene-fallback')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Classic view', exact: true })).toHaveAttribute(
     'aria-pressed',
